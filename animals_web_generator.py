@@ -43,18 +43,23 @@ def main():
     # Fetch data from the API for the user-entered animal
     animals_data = fetch_animal_data(animal_name)
 
-    if not animals_data:
-        print(f"No data found for '{animal_name}'.")
-        return
-
     # Load HTML template
     with open('animals_template.html', 'r') as fileobj:
         content = fileobj.read()
 
-    # Build the output string with animal info
-    output = ''.join(serialize_animal(animal) for animal in animals_data)
+    if animals_data:
+        # Build the output string with animal info
+        output = ''.join(serialize_animal(animal) for animal in animals_data)
+    else:
+        # Generate a nice error message if no animals found
+        output = f"""
+        <div style="text-align:center; margin-top: 50px;">
+            <h2 style="color: #cc0000;">The animal "{animal_name}" doesn't exist.</h2>
+            <p>Please try a different animal name.</p>
+        </div>
+        """
 
-    # Replace the placeholder with the actual animal info
+    # Replace the placeholder with the actual animal info or error message
     html_content = content.replace("__REPLACE_ANIMALS_INFO__", output)
 
     # Write to a new HTML file
