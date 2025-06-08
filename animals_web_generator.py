@@ -20,7 +20,6 @@ def serialize_animal(animal_obj):
     diet = animal_obj.get('characteristics', {}).get('diet', 'Unknown')
     locations = animal_obj.get('locations', [])
     location = locations[0] if locations else 'Unknown'
-   #print(name,location)
     animal_type = animal_obj.get('characteristics', {}).get('type', 'Unknown')
 
     return f"""
@@ -37,10 +36,16 @@ def serialize_animal(animal_obj):
     """
 
 
-
 def main():
-    # Fetch data from the API for "Fox"
-    animals_data = fetch_animal_data("fox")
+    # Ask the user for the animal name
+    animal_name = input("Enter a name of an animal: ").strip()
+
+    # Fetch data from the API for the user-entered animal
+    animals_data = fetch_animal_data(animal_name)
+
+    if not animals_data:
+        print(f"No data found for '{animal_name}'.")
+        return
 
     # Load HTML template
     with open('animals_template.html', 'r') as fileobj:
@@ -49,14 +54,14 @@ def main():
     # Build the output string with animal info
     output = ''.join(serialize_animal(animal) for animal in animals_data)
 
-
     # Replace the placeholder with the actual animal info
     html_content = content.replace("__REPLACE_ANIMALS_INFO__", output)
-
 
     # Write to a new HTML file
     with open('animals.html', 'w') as fileobj:
         fileobj.write(html_content)
+
+    print("Website was successfully generated to the file animals.html.")
 
 
 if __name__ == '__main__':
